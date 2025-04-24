@@ -44,6 +44,7 @@ class SearchScreen extends StatelessWidget {
 
                       return ListTile(
                         leading: CircleAvatar(
+                          backgroundColor: Colors.blue,
                           radius: 25,
                           backgroundImage:
                               user.profileImageUrl != null

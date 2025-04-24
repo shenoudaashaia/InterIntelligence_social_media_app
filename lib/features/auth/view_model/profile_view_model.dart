@@ -23,74 +23,68 @@ class ProfileViewModel extends ChangeNotifier {
     _user = await _authRepository.getCurrentUser();
     _setLoading(false);
   }
-Future<void> uploadProfilePicture(File imageFile) async {
-  try {
-    print('Uploading profile picture...');
-    // رفع الصورة إلى Firebase
-    String imageUrl = await _authRepository.uploadProfilePictur(imageFile);
-    print('Image uploaded successfully. Image URL: $imageUrl');
 
-    if (_user != null) {
-      // تحديث رابط الصورة في Firebase
-      print('Updating profile picture in Firebase...');
-      await _authRepository.updateProfilePicture(_user!.uid, imageUrl);
-      _user = _user!.copyWith(profileImageUrl: imageUrl);
-      print('Profile picture updated successfully');
+  Future<void> uploadProfilePicture(File imageFile) async {
+    try {
+      print('Uploading profile picture...');
+
+      String imageUrl = await _authRepository.uploadProfilePictur(imageFile);
+      print('Image uploaded successfully. Image URL: $imageUrl');
+
+      if (_user != null) {
+        print('Updating profile picture in Firebase...');
+        await _authRepository.updateProfilePicture(_user!.uid, imageUrl);
+        _user = _user!.copyWith(profileImageUrl: imageUrl);
+        print('Profile picture updated successfully');
+      }
+    } catch (e) {
+      print('Error uploading profile picture: $e');
     }
-  } catch (e) {
-    print('Error uploading profile picture: $e');
   }
-}
-Future<void> updateProfile(String name, String about) async {
-  if (_user == null) return;
-  _setLoading(true);
 
-  print('Updating profile with name: $name and about: $about');
-  // تحديث الاسم والوصف في Firebase
-  await _authRepository.updateProfile(_user!.uid, name, about);
+  Future<void> updateProfile(String name, String about) async {
+    if (_user == null) return;
+    _setLoading(true);
 
-  _user = _user!.copyWith(name: name, about: about);
-  _setLoading(false);
-  print('Profile updated successfully');
-  notifyListeners();
-}
+    print('Updating profile with name: $name and about: $about');
 
-// اختيار صورة من المعرض
-Future<void> pickImageFromGallery() async {
-  print('Picking image from gallery...');
-  final picked = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 80);
-  if (picked != null) {
-    _imagePath = picked.path;
-    print('Image picked from gallery: $_imagePath');
-    await uploadProfilePicture(File(picked.path)); // استخدام الميثود الجديدة
-    notifyListeners();
-  } else {
-    print('No image selected from gallery');
-  }
-}
+    await _authRepository.updateProfile(_user!.uid, name, about);
 
-// التقاط صورة من الكاميرا
-Future<void> pickImageFromCamera() async {
-  print('Picking image from camera...');
-  final picked = await ImagePicker().pickImage(source: ImageSource.camera, imageQuality: 80);
-  if (picked != null) {
-    _imagePath = picked.path;
-    print('Image picked from camera: $_imagePath');
-    await uploadProfilePicture(File(picked.path)); // استخدام الميثود الجديدة
-    notifyListeners();
-  } else {
-    print('No image selected from camera');
-  }
-}
-
-
-  
-
-  Future<void> logout() async {
-    await _authRepository.logout();
-    _user = null;
+    _user = _user!.copyWith(name: name, about: about);
+    _setLoading(false);
+    print('Profile updated successfully');
     notifyListeners();
   }
+
+  Future<void> pickImageFromGallery() async {
+    print('Picking image from gallery...');
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+    if (picked != null) {
+      _imagePath = picked.path;
+      print('Image picked from gallery: ${_imagePath}');
+      await uploadProfilePicture(File(picked.path));
+      notifyListeners();
+    } else {
+      print('No image selected from gallery');
+    }
+  }
+
+  Future<void> pickImageFromCamera() async {
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      imageQuality: 80,
+    );
+    if (picked != null) {
+      _imagePath = picked.path;
+      await uploadProfilePicture(File(picked.path));
+      notifyListeners();
+    }
+  }
+
+
 
   void _setLoading(bool value) {
     _isLoading = value;

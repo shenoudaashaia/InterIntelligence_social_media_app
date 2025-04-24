@@ -23,7 +23,10 @@ class ProfileScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Profile'), iconTheme: const IconThemeData(color: Colors.blue),),
+        appBar: AppBar(
+          title: const Text('Profile'),
+          iconTheme: const IconThemeData(color: Colors.blue),
+        ),
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 10),
           child: FloatingActionButton.extended(
@@ -44,38 +47,26 @@ class ProfileScreen extends StatelessWidget {
             child: Column(
               children: [
                 SizedBox(width: mq.width, height: mq.height * .03),
-                Stack(
-                  children: [
-                    profileViewModel.imagePath != null
-                        ? ClipRRect(
-                          borderRadius: BorderRadius.circular(mq.height * .1),
-                          child: Image.file(
-                            File(profileViewModel.imagePath!),
-                            width: mq.height * .2,
-                            height: mq.height * .2,
-                            fit: BoxFit.cover,
+                GestureDetector(
+                  onTap: () => _showBottomSheet(context, mq, profileViewModel),
+                  child:
+                      profileViewModel.imagePath != null
+                          ? ClipRRect(
+                            borderRadius: BorderRadius.circular(mq.height * .1),
+                            child: Image.file(
+                              File(profileViewModel.imagePath!),
+                              width: mq.height * .2,
+                              height: mq.height * .2,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                          : ProfileImage(
+                            size: mq.height * .2,
+                            username: user.name,
+                            imageUrl: user.profileImageUrl,
                           ),
-                        )
-                        : ProfileImage(
-                          size: mq.height * .2,
-                          username: user.name,
-                          imageUrl: user.profileImageUrl,
-                        ),
-                    Positioned(
-                      bottom: 8,
-                      right: 8,
-                      child: MaterialButton(
-                        elevation: 2,
-                        onPressed:
-                            () =>
-                                _showBottomSheet(context, mq, profileViewModel),
-                        shape: const CircleBorder(),
-                        color: Colors.white,
-                        child: Icon(Icons.edit, size: 18, color: Colors.blue),
-                      ),
-                    ),
-                  ],
                 ),
+
                 SizedBox(height: mq.height * .03),
                 Text(
                   user.email,
@@ -125,8 +116,11 @@ class ProfileScreen extends StatelessWidget {
                       );
                     }
                   },
-                  icon: const Icon(Icons.edit, size: 28 , color:Colors.blue,),
-                  label: const Text('UPDATE', style: TextStyle(fontSize: 16,color:Colors.blue)),
+                  icon: const Icon(Icons.edit, size: 28, color: Colors.blue),
+                  label: const Text(
+                    'UPDATE',
+                    style: TextStyle(fontSize: 16, color: Colors.blue),
+                  ),
                 ),
               ],
             ),
@@ -174,7 +168,7 @@ class ProfileScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       shape: const CircleBorder(),
-                      fixedSize: Size(mq.width * .2, mq.height * .15),
+                      fixedSize: Size(mq.width * .3, mq.height * .15),
                     ),
                     child: const Icon(
                       Icons.photo,
@@ -189,7 +183,7 @@ class ProfileScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       shape: const CircleBorder(),
-                      fixedSize: Size(mq.width * .2, mq.height * .15),
+                      fixedSize: Size(mq.width * .3, mq.height * .15),
                     ),
                     child: const Icon(
                       Icons.camera_alt,
